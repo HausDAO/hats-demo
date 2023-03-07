@@ -53,6 +53,8 @@ export const APP_FORM: Record<string, CustomFormLego> = {
       { ...FIELD.DESCRIPTION, id: "details", label: "Hat Details" },
       { ...FIELD.LINK, id: "imgURI", label: "Hat Image" },
       { ...FIELD.TITLE, id: "maxSupply", label: "Max Supply" },
+      { ...FIELD.TITLE, id: "eligibility", label: "Eligibility" },
+      { ...FIELD.TITLE, id: "toggle", label: "Toggle" },
       ...PROPOSAL_SETTINGS_FIELDS,
     ],
   },
