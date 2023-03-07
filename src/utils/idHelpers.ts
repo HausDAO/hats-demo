@@ -20,3 +20,8 @@ export function prettyIdToUrlId(id: string) {
   }
   return treeId;
 }
+
+export function prettyIdToId(id?: string) {
+  if (!id) return;
+  return id.replaceAll(".", "").padEnd(66, "0");
+}

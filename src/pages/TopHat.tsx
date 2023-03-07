@@ -24,7 +24,7 @@ import { RiArrowRightSLine } from "react-icons/ri/index.js";
 import { TARGET_DAO } from "../targetDao";
 import { StyledRouterLink } from "../components/Layout";
 import { useHat } from "../hooks/useHat";
-import { prettyIdToUrlId } from "../utils/idHelpers";
+import { prettyIdToId, prettyIdToUrlId } from "../utils/idHelpers";
 
 const HatList = styled.div`
   display: flex;
@@ -42,7 +42,9 @@ export const TopHat = () => {
   const { hatId } = useParams();
   const { dao } = useDaoData();
 
-  const { hat } = useHat({ hatId });
+  console.log("prettyIdToId", prettyIdToId(hatId));
+
+  const { hat } = useHat({ hatId: prettyIdToId(hatId) });
 
   console.log("hat", hat);
 

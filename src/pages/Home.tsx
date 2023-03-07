@@ -50,8 +50,9 @@ const ListItemHoverContainer = styled.div`
 
 const ListItem = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
   word-wrap: break-word;
 `;
 
@@ -83,15 +84,17 @@ export const Home = () => {
       {topHats &&
         topHats.map((hat: any) => {
           return (
-            <ListItemContainer key={hat.id}>
-              <ListItemLink to={`/hat/${hat.id}`}>
+            <ListItemContainer key={hat.prettyId}>
+              <ListItemLink to={`/hat/${hat.prettyId}`}>
                 <ListItemHoverContainer>
-                  <ListItem>
-                    <ParLg>
-                      <Bold>{hat.details}</Bold>
-                    </ParLg>
-                    <p>{decimalId(hat.prettyId)}</p>
-                  </ListItem>
+                  <div>
+                    <ListItem>
+                      <img src={hat.imageUri} width="50px" />
+                      <ParLg>
+                        <Bold>{hat.details}</Bold>
+                      </ParLg>
+                    </ListItem>
+                  </div>
                   <StyledIcon />
                 </ListItemHoverContainer>
               </ListItemLink>
