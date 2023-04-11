@@ -55,9 +55,9 @@ export const APP_CONTRACT: Record<string, ContractLego> = {
     contractName: "Hats",
     abi: HATS_ABI,
     targetAddress: {
-      "0x1": "0x96bD657Fcc04c71B47f896a829E5728415cbcAa1",
-      "0x5": "0x96bD657Fcc04c71B47f896a829E5728415cbcAa1",
-      "0x64": "0x96bD657Fcc04c71B47f896a829E5728415cbcAa1",
+      "0x1": "0x9d2dfd6066d5935267291718e8aa16c8ab729e9d",
+      "0x5": "0x9d2dfd6066d5935267291718e8aa16c8ab729e9d",
+      "0x64": "0x9d2dfd6066d5935267291718e8aa16c8ab729e9d",
     },
   },
 };
