@@ -15,8 +15,6 @@ export const CreateHat = () => {
     const params = new URLSearchParams(location.search);
     const defaultValues = params.get("defaultValues");
 
-    console.log("defaultValues", defaultValues);
-
     if (!defaultValues) return null;
     return JSON.parse(defaultValues);
   }, [location]);

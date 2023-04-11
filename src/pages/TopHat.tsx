@@ -42,11 +42,7 @@ export const TopHat = () => {
   const { hatId } = useParams();
   const { dao } = useDaoData();
 
-  console.log("prettyIdToId", prettyIdToId(hatId));
-
   const { hat } = useHat({ hatId: prettyIdToId(hatId) });
-
-  console.log("hat", hat);
 
   if (!hat) return null;
 
@@ -59,6 +55,8 @@ export const TopHat = () => {
           <StyledRouterLink
             to={`/create-hat?defaultValues=${JSON.stringify({
               topHatId: hatId,
+              toggle: dao?.safeAddress,
+              eligibility: dao?.safeAddress,
             })}`}
           >
             <Button variant="outline">Create Sub Hat</Button>

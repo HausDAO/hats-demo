@@ -32,8 +32,12 @@
     "name": "HatDoesNotExist",
     "type": "error"
   },
+  { "inputs": [], "name": "HatNotActive", "type": "error" },
   { "inputs": [], "name": "Immutable", "type": "error" },
+  { "inputs": [], "name": "InvalidHatId", "type": "error" },
+  { "inputs": [], "name": "InvalidUnlink", "type": "error" },
   { "inputs": [], "name": "LinkageNotRequested", "type": "error" },
+  { "inputs": [], "name": "MaxLevelsReached", "type": "error" },
   { "inputs": [], "name": "MaxLevelsReached", "type": "error" },
   { "inputs": [], "name": "NewMaxSupplyTooLow", "type": "error" },
   {
@@ -45,9 +49,12 @@
     "type": "error"
   },
   { "inputs": [], "name": "NotAdminOrWearer", "type": "error" },
+  { "inputs": [], "name": "NotEligible", "type": "error" },
   { "inputs": [], "name": "NotHatWearer", "type": "error" },
   { "inputs": [], "name": "NotHatsEligibility", "type": "error" },
   { "inputs": [], "name": "NotHatsToggle", "type": "error" },
+  { "inputs": [], "name": "StringTooLong", "type": "error" },
+  { "inputs": [], "name": "ZeroAddress", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
@@ -408,7 +415,11 @@
   {
     "inputs": [
       { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" },
-      { "internalType": "uint256", "name": "_newAdminHat", "type": "uint256" }
+      { "internalType": "uint256", "name": "_newAdminHat", "type": "uint256" },
+      { "internalType": "address", "name": "_eligibility", "type": "address" },
+      { "internalType": "address", "name": "_toggle", "type": "address" },
+      { "internalType": "string", "name": "_details", "type": "string" },
+      { "internalType": "string", "name": "_imageURI", "type": "string" }
     ],
     "name": "approveLinkTopHatToTree",
     "outputs": [],
@@ -439,8 +450,8 @@
   },
   {
     "inputs": [
-      { "internalType": "address[]", "name": "owners", "type": "address[]" },
-      { "internalType": "uint256[]", "name": "ids", "type": "uint256[]" }
+      { "internalType": "address[]", "name": "_wearers", "type": "address[]" },
+      { "internalType": "uint256[]", "name": "_hatIds", "type": "uint256[]" }
     ],
     "name": "balanceOfBatch",
     "outputs": [
@@ -479,7 +490,7 @@
       { "internalType": "string[]", "name": "_imageURIs", "type": "string[]" }
     ],
     "name": "batchCreateHats",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "success", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -489,7 +500,7 @@
       { "internalType": "address[]", "name": "_wearers", "type": "address[]" }
     ],
     "name": "batchMintHats",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "success", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -562,7 +573,7 @@
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
     "name": "checkHatStatus",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "toggled", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -572,7 +583,7 @@
       { "internalType": "address", "name": "_wearer", "type": "address" }
     ],
     "name": "checkHatWearerStatus",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "updated", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -596,10 +607,35 @@
   {
     "inputs": [
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" },
-      { "internalType": "uint8", "name": "_level", "type": "uint8" }
+      { "internalType": "uint32", "name": "_level", "type": "uint32" }
     ],
     "name": "getAdminAtLevel",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      { "internalType": "uint256", "name": "admin", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" },
+      { "internalType": "uint32", "name": "_level", "type": "uint32" }
+    ],
+    "name": "getAdminAtLocalLevel",
+    "outputs": [
+      { "internalType": "uint256", "name": "admin", "type": "uint256" }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
+    "name": "getHatEligibilityModule",
+    "outputs": [
+      { "internalType": "address", "name": "eligibility", "type": "address" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -608,7 +644,31 @@
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
     "name": "getHatLevel",
-    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "outputs": [
+      { "internalType": "uint32", "name": "level", "type": "uint32" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
+    "name": "getHatMaxSupply",
+    "outputs": [
+      { "internalType": "uint32", "name": "maxSupply", "type": "uint32" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
+    "name": "getHatToggleModule",
+    "outputs": [
+      { "internalType": "address", "name": "toggle", "type": "address" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -617,25 +677,7 @@
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
     "name": "getImageURIForHat",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "_admin", "type": "uint256" }
-    ],
-    "name": "getNextId",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" }
-    ],
-    "name": "getTippyTophatDomain",
-    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
+    "outputs": [{ "internalType": "string", "name": "_uri", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -643,18 +685,43 @@
     "inputs": [
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
-    "name": "getTophatDomain",
-    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
+    "name": "getLocalHatLevel",
+    "outputs": [
+      { "internalType": "uint32", "name": "level", "type": "uint32" }
+    ],
     "stateMutability": "pure",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_hatId", "type": "uint256" },
-      { "internalType": "uint8", "name": "_level", "type": "uint8" }
+      { "internalType": "uint256", "name": "_admin", "type": "uint256" }
     ],
-    "name": "getTreeAdminAtLevel",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "getNextId",
+    "outputs": [
+      { "internalType": "uint256", "name": "nextId", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" }
+    ],
+    "name": "getTippyTopHatDomain",
+    "outputs": [
+      { "internalType": "uint32", "name": "domain", "type": "uint32" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
+    "name": "getTopHatDomain",
+    "outputs": [
+      { "internalType": "uint32", "name": "domain", "type": "uint32" }
+    ],
     "stateMutability": "pure",
     "type": "function"
   },
@@ -671,11 +738,20 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
+    "name": "isActive",
+    "outputs": [{ "internalType": "bool", "name": "active", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "_user", "type": "address" },
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
     "name": "isAdminOfHat",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "isAdmin", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -695,7 +771,7 @@
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
     "name": "isEligible",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "eligible", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -713,9 +789,33 @@
     "inputs": [
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
+    "name": "isLocalTopHat",
+    "outputs": [
+      { "internalType": "bool", "name": "_isLocalTopHat", "type": "bool" }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
     "name": "isTopHat",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      { "internalType": "bool", "name": "_isTopHat", "type": "bool" }
+    ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
+    ],
+    "name": "isValidHatId",
+    "outputs": [
+      { "internalType": "bool", "name": "validHatId", "type": "bool" }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -724,7 +824,7 @@
       { "internalType": "uint256", "name": "_hatId", "type": "uint256" }
     ],
     "name": "isWearerOfHat",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "isWearer", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -764,7 +864,7 @@
       { "internalType": "address", "name": "_wearer", "type": "address" }
     ],
     "name": "mintHat",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "success", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -794,14 +894,20 @@
       { "internalType": "uint256", "name": "_linkedAdmin", "type": "uint256" }
     ],
     "name": "noCircularLinkage",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      { "internalType": "bool", "name": "notCircular", "type": "bool" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" },
-      { "internalType": "uint256", "name": "_newAdminHat", "type": "uint256" }
+      { "internalType": "uint256", "name": "_newAdminHat", "type": "uint256" },
+      { "internalType": "address", "name": "_eligibility", "type": "address" },
+      { "internalType": "address", "name": "_toggle", "type": "address" },
+      { "internalType": "string", "name": "_details", "type": "string" },
+      { "internalType": "string", "name": "_imageURI", "type": "string" }
     ],
     "name": "relinkTopHatWithinTree",
     "outputs": [],
@@ -862,8 +968,10 @@
       { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" },
       { "internalType": "uint256", "name": "_newAdminHat", "type": "uint256" }
     ],
-    "name": "sameTippyTophatDomain",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "name": "sameTippyTopHatDomain",
+    "outputs": [
+      { "internalType": "bool", "name": "sameDomain", "type": "bool" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -883,7 +991,7 @@
       { "internalType": "bool", "name": "_newStatus", "type": "bool" }
     ],
     "name": "setHatStatus",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "toggled", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -895,7 +1003,7 @@
       { "internalType": "bool", "name": "_standing", "type": "bool" }
     ],
     "name": "setHatWearerStatus",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [{ "internalType": "bool", "name": "updated", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -905,7 +1013,7 @@
     ],
     "name": "supportsInterface",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -921,7 +1029,8 @@
   },
   {
     "inputs": [
-      { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" }
+      { "internalType": "uint32", "name": "_topHatDomain", "type": "uint32" },
+      { "internalType": "address", "name": "_wearer", "type": "address" }
     ],
     "name": "unlinkTopHatFromTree",
     "outputs": [],
@@ -931,7 +1040,7 @@
   {
     "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
     "name": "uri",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "outputs": [{ "internalType": "string", "name": "_uri", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
